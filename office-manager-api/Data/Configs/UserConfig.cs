@@ -20,6 +20,13 @@ namespace office_manager_api.Data.Configs
                 .IsRequired()
                 .HasMaxLength(320);
 
+            builder.Property(u => u.FirstName)
+               .IsRequired()
+               .HasMaxLength(50);
+            builder.Property(u => u.LastName)
+               .IsRequired()
+               .HasMaxLength(50);
+
             // Garantit qu'aucun utilisateur n'utilise le même email
             builder.HasIndex(u => u.Email)
                 .IsUnique()

@@ -39,7 +39,7 @@
         /// <summary>
         /// Constructeur privé requis par Entity Framework Core.
         /// </summary>
-        public Reservation() { }
+        protected Reservation() { }
         /// <summary>
         /// Constructeur utilisé pour créer une nouvelle réservation.
         /// </summary>
@@ -55,21 +55,6 @@
             RecurrenceEndDate = endDate;
             Status = "Confirmed"; // Par défaut, une nouvelle réservation est confirmée
         }
-        /// <summary>
-        /// Constructeur pour récupérer une réservation existante.
-        /// </summary>
-        public Reservation(int id, int userId, int resourceId, DateTime startTime, DateTime endTime, string purpose, string status, bool isRecurring, string?pattern, DateTime? endDate)
-        {
-            Id = id;
-            UserId = userId;
-            ResourceId = resourceId;
-            StartTime = startTime;
-            EndTime = endTime;
-            Purpose = purpose;
-            Status = status;
-            IsRecurring = isRecurring;
-            RecurrencePattern = pattern;
-            RecurrenceEndDate = endDate;
-        }
+       
     }
 }

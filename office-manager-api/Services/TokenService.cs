@@ -21,7 +21,7 @@ namespace office_manager_api.Services
             {
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role),
-                new Claim("userId", user.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? "Super_Secret_Long_Key_123456789_Min_32_Chars"));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);

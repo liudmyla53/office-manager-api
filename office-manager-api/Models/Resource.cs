@@ -13,7 +13,7 @@
         /// <summary>
         /// Constructeur privé requis par Entity Framework Core.
         /// </summary>
-        public Resource() { }
+        protected Resource() { }
         /// <summary>
         /// Constructeur utilisé pour créer une nouvelle ressource.
         /// </summary>
@@ -24,18 +24,6 @@
             Capacity = capacity;
             Location = location;
         }
-        /// <summary>
-        /// Constructeur pour récupérer une ressource existante.
-        /// </summary>
-        
-        public Resource(int id, string name, string type, int capacity, string location)
-        {
-            Id = id;
-            Name = name;
-            Type = type;
-            Capacity = capacity;
-            Location = location;
-        }
-
+      
     }
 }

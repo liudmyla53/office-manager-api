@@ -31,12 +31,17 @@ namespace office_manager_api.Controllers
                 return BadRequest("Email already in use");
             // Création de l'utilisateur
             var user = new User
-            {
-                Email = registerDto.Email.ToLower(),
-                Password = registerDto.Password, // Hash du mot de passe
-                Role = "Employee", // Rôle par défaut
-                IsConfirmed = false // L'utilisateur doit confirmer son email
-            };
+                (
+                registerDto.firstName,
+                registerDto.lastName,
+                registerDto.Email.ToLower(),
+                registerDto.Password // Hash du mot de passe 
+               // "Employee" // Rôle par défaut
+            );
+
+            
+            user.IsConfirmed = false; // L'utilisateur doit confirmer son email
+
             _context.Users.Add(user);
            // await _context.Set<User>().AddAsync(user);
             await _context.SaveChangesAsync();
@@ -56,12 +61,14 @@ namespace office_manager_api.Controllers
                
             //if (!user.IsConfirmed)
               //  return Unauthorized("Please confirm your email before logging in");
-            return Ok(new UserDto 
+            var responseDto= new UserDto
             { 
+                Id = user.Id,
                 Email = user.Email, 
                 Role = user.Role, 
                 Token = _tokenService.CreateToken(user) 
-            });
+            };
+            return Ok(responseDto);
         }
 
         // Exemple d'un point de terminaison (Endpoint) pour tester
