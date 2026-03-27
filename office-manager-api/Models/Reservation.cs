@@ -9,9 +9,9 @@
 
         // --- Clés étrangères (Relations) --- 
         public int UserId { get; set; } // Référence à l'utilisateur qui a fait la réservation
-        public virtual User User { get; set; } = default!; // Navigation vers l'utilisateur
+        public virtual User? User { get; set; } // Navigation vers l'utilisateur
         public int ResourceId { get; set; } // Référence à la ressource réservée
-        public virtual Resource Resource { get; set; } = default!; // Navigation vers la ressource
+        public virtual Resource? Resource { get; set; } // Navigation vers la ressource
 
         // --- Dates et Heures ---
         public DateTime StartTime { get; set; } // Date et heure de début de la réservation
@@ -39,7 +39,7 @@
         /// <summary>
         /// Constructeur privé requis par Entity Framework Core.
         /// </summary>
-        protected Reservation() { }
+        private Reservation() { }
         /// <summary>
         /// Constructeur utilisé pour créer une nouvelle réservation.
         /// </summary>

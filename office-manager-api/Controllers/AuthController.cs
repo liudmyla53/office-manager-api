@@ -55,13 +55,15 @@ namespace office_manager_api.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
+            // 1. Recherche d'un utilisateur
             var user = await _context.Users.FirstOrDefaultAsync(u=> u.Email == loginDto.Email.ToLower());
+            // 2. Si l'utilisateur est introuvable  or Vérification du mot de passe — RETOURNER une erreur (c'est la première méthode)
             if (user == null || user.Password != loginDto.Password)
             {return Unauthorized("Invalid email or password");}
-               
-            //if (!user.IsConfirmed)
-              //  return Unauthorized("Please confirm your email before logging in");
-            var responseDto= new UserDto
+
+           
+            // 3. Si tout se passe bien, RENVOYEZ les données utilisateur (c'est la deuxième méthode)
+            var responseDto = new UserDto
             { 
                 Id = user.Id,
                 Email = user.Email, 
