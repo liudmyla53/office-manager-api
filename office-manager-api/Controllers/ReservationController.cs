@@ -121,7 +121,8 @@ namespace office_manager_api.Controllers
             var reservations = _context.Reservations
                 .Include(r => r.Resource)
                 .Include(r => r.User)
-                //.Where(r => r.UserId == userId)
+                .Where(r => r.StartTime >= DateTime.Now)
+                .OrderBy(r=>r.StartTime)
                 .ToList();
             return Ok(reservations);
         }
