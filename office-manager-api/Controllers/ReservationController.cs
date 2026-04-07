@@ -33,39 +33,62 @@ namespace office_manager_api.Controllers
             // L'ID utilisateur est lié automatiquement depuis le token
             int UserId = int.Parse(userIdClaim.Value);
 
-            // 1.
-            var resource = _context.Resources.Find(dto.ResourceId);
-            if (resource == null) return NotFound("Ressource inexistante");
+            var createdReservations = new List<Reservation>();
+            int occurrences = dto.IsRecurring ? 10 : 1;
 
-            // 2. 
-            bool conflict = _context.Reservations.Any(r =>
-                r.ResourceId == dto.ResourceId &&
-                r.StartTime < dto.EndTime &&
-                dto.StartTime < r.EndTime
-            );
+            for (int i = 0; i < occurrences; i++)
+            {
+                DateTime currentStart = dto.StartTime;
+                DateTime currentEnd = dto.EndTime;
 
-            if (conflict) return Conflict("Cette ressource est déjà réservée pour ce créneau.");
+                if (dto.IsRecurring)
+                {
+                    if (dto.RecurrencePattern == "weekly")
+                    {
+                        currentStart = dto.StartTime.AddDays(i * 7);
+                        currentEnd = dto.EndTime.AddDays(i * 7);
+                    }
+                    else if (dto.RecurrencePattern == "monthly")
+                    {
+                        currentStart = dto.StartTime.AddMonths(i);
+                        currentEnd = dto.EndTime.AddMonths(i);
+                    }
+                }
 
-            // 
-            var reservation = new Reservation(
-                UserId,
-                dto.ResourceId,
-                dto.StartTime,
-                dto.EndTime,
-                dto.Purpose,
-                dto.IsRecurring,
-                dto.RecurrencePattern
-            );
+                // 1.
+                var resource = _context.Resources.Find(dto.ResourceId);
+                if (resource == null) return NotFound("Ressource inexistante");
 
-            _context.Reservations.Add(reservation);
-            _context.SaveChanges();
+                // 2. 
+                bool conflict = _context.Reservations.Any(r =>
+                    r.ResourceId == dto.ResourceId &&
+                    r.StartTime < currentEnd &&
+                    currentStart < r.EndTime
+                );
+
+                if (conflict) return Conflict($"Conflit le {currentStart.ToShortDateString()}.");
+
+                // 
+                var reservation = new Reservation(
+                    UserId,
+                    dto.ResourceId,
+                    currentStart,
+                    currentEnd,
+                    dto.Purpose,
+                    dto.IsRecurring,
+                    dto.RecurrencePattern
+                );
+
+                _context.Reservations.Add(reservation);
+                createdReservations.Add(reservation);
+            }
+                _context.SaveChanges();
 
             // 4. 
             return Ok(new
             {
-                message = "Réservation réussie !",
-                id = reservation.Id,
-                startTime = reservation.StartTime
+                count = createdReservations.Count,
+                firstReservationId = createdReservations.FirstOrDefault()?.Id
             });
         }
         //Transfert de réservation

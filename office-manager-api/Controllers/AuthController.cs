@@ -29,14 +29,19 @@ namespace office_manager_api.Controllers
             // Vérification de l'existence de l'utilisateur
             if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email.ToLower()))
                 return BadRequest("Email already in use");
+
+            //Nous « hachons » le mot de passe AVANT de créer l'utilisateur
+            string passwordHashed = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
+
             // Création de l'utilisateur
             var user = new User
                 (
                 registerDto.firstName,
                 registerDto.lastName,
                 registerDto.Email.ToLower(),
-                registerDto.Password // Hash du mot de passe 
-               // "Employee" // Rôle par défaut
+                passwordHashed
+            // registerDto.Password // Hash du mot de passe 
+            // "Employee" // Rôle par défaut
             );
 
             
@@ -58,7 +63,7 @@ namespace office_manager_api.Controllers
             // 1. Recherche d'un utilisateur
             var user = await _context.Users.FirstOrDefaultAsync(u=> u.Email == loginDto.Email.ToLower());
             // 2. Si l'utilisateur est introuvable  or Vérification du mot de passe — RETOURNER une erreur (c'est la première méthode)
-            if (user == null || user.Password != loginDto.Password)
+            if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password))
             {return Unauthorized("Invalid email or password");}
 
            
@@ -68,6 +73,7 @@ namespace office_manager_api.Controllers
                 Id = user.Id,
                 Email = user.Email, 
                 Role = user.Role, 
+                FirstName = user.FirstName,
                 Token = _tokenService.CreateToken(user) 
             };
             return Ok(responseDto);

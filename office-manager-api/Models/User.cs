@@ -57,7 +57,7 @@
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Name cannot be empty.");
             
-            return name.Trim();
+            return name.Trim(); // Retourne le nom sans espaces inutiles
         }
 
         /// <summary>
